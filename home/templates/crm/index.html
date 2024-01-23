@@ -1,0 +1,66 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% tailwind_css %}
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
+
+</head>
+
+<body>
+    <nav class="bg-blue-600 text-white font-bold flex items-center justify-between p-4">
+        <div class="logo">logo</div>
+        <div
+            class="items md:flex flex flex-col md:flex-row absolute md:static left-[0%] pb-4 top-[-110%] w-full md:w-auto bg-blue-600">
+            <a href="/"
+                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
+                Home</a>
+            <a href="/about/"
+                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
+                About</a>
+            <a href=""
+                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
+                Profile</a>
+            <a href=""
+                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
+                Contact</a>
+        </div>
+        <i class="ri-menu-line text-3xl hamburger md:hidden cursor-pointer"></i>
+    </nav>
+    <div class="main">
+        <h1 class="text-4xl font-bold text-center my-10">Welcome to </h1>
+        <p class="text-2xl text-center">"Miles Traveled, Expenses Managed: Your Journey, Your Budget, Your Way"</p>
+        <p class="my-6 text-4xl font-bold text-center">Choose Mode of Transport</p>
+
+        <div class="wrapper my-20 flex  justify-center md:justify-between md:px-40">
+            <a href="/personal/" class="bg-blue-500 h-40 w-44 justify-center p-10 flex items-center rounded-lg hover:bg-blue-700 mx-10 transition-colors"><button type="button" class="flex-col flex items-center text-xl text-white font-bold "><i class="ri-car-fill text-white text-6xl"></i>Personal Vehicle</button></a>
+            <a href="/others/" class="bg-blue-500 h-40 w-44 justify-center p-10 flex items-center rounded-lg hover:bg-blue-700 mx-10  transition-colors"><button type="button" class="flex-col flex items-center text-xl text-white font-bold "><i class="ri-plane-fill text-white text-6xl"></i>Others</button></a>
+        </div>
+    </div>
+</body>
+<script>
+    let ham = document.querySelector('.hamburger')
+    let items = document.querySelector('.items')
+    let open = false
+    ham.addEventListener('click', () => {
+        if (open === false) {
+            items.style.top = '10%'
+            ham.classList.add('ri-close-fill')
+            ham.classList.remove('ri-menu-line')
+            open = true
+            items.style.transition = '0.3s all ease'
+        }
+        else {
+            items.style.top = '-110%'
+            ham.classList.remove('ri-close-fill')
+            ham.classList.add('ri-menu-line')
+            open = false
+        }
+    })
+</script>
+
+</html>
