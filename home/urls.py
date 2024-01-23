@@ -7,4 +7,5 @@ urlpatterns = [
     path('personal/',views.personal_vehicle,name='personal_vehicle'),
     path('personal/cars/',views.car,name='car'),
     path('others/',views.others,name='others'),
+    path('maps/',views.calculate_distance_cost,name='calculate_distance_cost')
 ]

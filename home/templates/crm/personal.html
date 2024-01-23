@@ -38,6 +38,7 @@
         <div class="wrapper my-5">
             <p class="text-center font-bold text-2xl">Enter Vehicle Details</p>
             <form method="post" class="flex flex-col my-5">
+                {% csrf_token %}
                 <div class="current flex justify-center items-center mt-2"><i
                         class="ri-map-pin-line text-3xl text-blue-500"></i><input type="text"
                         placeholder="Enter Location" class="bg-gray-300 p-2 ml-3 w-80"></div>
@@ -47,8 +48,8 @@
                         <div class="current flex justify-center items-center mt-2"><i
                             class="ri-gas-station-fill text-3xl text-blue-500"></i><input type="text"
                             placeholder="Enter Mileage" class="bg-gray-300 p-2 ml-3 w-80"></div>
-                        <button type="submit" class="bg-blue-500 py-4 text-white font-bold px-6 rounded-3xl w-40 absolute bottom-60 md:bottom-20 left-1/2 transform -translate-x-1/2"
-                        ">Submit</button>
+                        <a href="/maps/"><button type="submit" class="bg-blue-500 py-4 text-white font-bold px-6 rounded-3xl w-40 absolute bottom-60 md:bottom-20 left-1/2 transform -translate-x-1/2"
+                            ">Submit</button></a>
             </form>
         </div>
     </div>
