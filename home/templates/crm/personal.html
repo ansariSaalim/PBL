@@ -5,89 +5,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Personal Page</title>
     {% tailwind_css %}
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
-
+    <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?key=AsQxFl6g4F3LyOFAaZjIj1Y_L0oTY879ZgmCfeDuQGT0rv-j3K_OOgCKN5kup1Dw&callback=getMap" async defer></script>
 </head>
 
 <body>
     <nav class="bg-blue-600 text-white font-bold flex items-center justify-between p-4">
         <div class="logo">logo</div>
-        <div
-            class="items md:flex flex flex-col md:flex-row absolute md:static left-[0%] pb-4 top-[-110%] w-full md:w-auto bg-blue-600">
-            <a href="/"
-                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
-                Home</a>
-            <a href=""
-                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
-                About</a>
-            <a href=""
-                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
-                Profile</a>
-            <a href=""
-                class="nav-iems  text-center my-5 hover:text-gray-400 cursor-pointer transition-colors  md:mx-3 text-xl">
-                Contact</a>
+        <div class="items md:flex flex flex-col md:flex-row absolute md:static left-[0%] pb-4 top-[-110%] w-full md:w-auto bg-blue-600">
+            <a href="/" class="nav-iems text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">Home</a>
+            <a href="" class="nav-iems text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">About</a>
+            <a href="" class="nav-iems text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">Profile</a>
+            <a href="" class="nav-iems text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">Contact</a>
         </div>
         <i class="ri-menu-line text-3xl hamburger md:hidden cursor-pointer"></i>
     </nav>
-</body>
-<div class="main h-[100vh]">
 
-    <div class="bike-content tab-content h-[100%]">
-        <div class="wrapper my-5">
-            <p class="text-center font-bold text-2xl">Enter Vehicle Details</p>
-            <form method="post" class="flex flex-col my-5">
-                {% csrf_token %}
-                <div class="current flex justify-center items-center mt-2"><i
-                        class="ri-map-pin-line text-3xl text-blue-500"></i><input type="text"
-                        placeholder="Enter Location" class="bg-gray-300 p-2 ml-3 w-80"></div>
-                <div class="destination flex justify-center items-center mt-2"><i
-                        class="ri-treasure-map-fill text-3xl text-blue-500"></i><input type="text"
-                        placeholder="Enter destination" class="bg-gray-300 p-2 w-80 ml-3"></div>
-                        <div class="current flex justify-center items-center mt-2"><i
-                            class="ri-gas-station-fill text-3xl text-blue-500"></i><input type="text"
-                            placeholder="Enter Mileage" class="bg-gray-300 p-2 ml-3 w-80"></div>
-                        <a href="/maps/"><button type="submit" class="bg-blue-500 py-4 text-white font-bold px-6 rounded-3xl w-40 absolute bottom-60 md:bottom-20 left-1/2 transform -translate-x-1/2"
-                            ">Submit</button></a>
-            </form>
+    <div class="main h-[100vh]">
+        <div class="bike-content tab-content h-[100%]">
+            <div class="wrapper my-5">
+                <p class="text-center font-bold text-2xl">Enter Vehicle Details</p>
+                <form method="post" onsubmit="calculateDistance(event)" class="flex flex-col my-5">
+                    {% csrf_token %}
+                    <div class="current flex justify-center items-center mt-2">
+                        <i class="ri-map-pin-line text-3xl text-blue-500"></i>
+                        <input type="text" placeholder="Enter Location" name="current" id="current" class="bg-gray-300 p-2 ml-3 w-80">
+                    </div>
+                    <div class="destination flex justify-center items-center mt-2">
+                        <i class="ri-treasure-map-fill text-3xl text-blue-500"></i>
+                        <input type="text" placeholder="Enter destination" name="destination" id="destination" class="bg-gray-300 p-2 w-80 ml-3">
+                    </div>
+                    <div class="current flex justify-center items-center mt-2">
+                        <i class="ri-gas-station-fill text-3xl text-blue-500"></i>
+                        <input type="text" placeholder="Enter Mileage" name="mileage" id="mileage" class="bg-gray-300 p-2 ml-3 w-80">
+                    </div>
+                    <button type="submit" class="search_btn bg-blue-500 py-4 text-white font-bold px-6 rounded-3xl w-40 absolute bottom-60 md:bottom-20 left-1/2 transform -translate-x-1/2">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
+    <script>
+        function calculateDistance(event) {
+            event.preventDefault();
+            // Your distance calculation logic here
+            // ...
 
-</div>
-<script>
-    let ham = document.querySelector('.hamburger');
-    let items = document.querySelector('.items');
-    let open = false;
-
-    ham.addEventListener('click', () => {
-        if (open === false) {
-            items.style.top = '10%';
-            ham.classList.add('ri-close-fill');
-            ham.classList.remove('ri-menu-line');
-            open = true;
-            items.style.transition = '0.3s all ease';
-        } else {
-            items.style.top = '-110%';
-            ham.classList.remove('ri-close-fill');
-            ham.classList.add('ri-menu-line');
-            open = false;
+            // Example: Log a message to the console
+            console.log("Distance calculation logic executed");
         }
-    });
 
-    // bikeTab.addEventListener('click', () => {
-    //     bikeTab.style.backgroundColor = '#1976D2';
-    //     carTab.style.backgroundColor = '#3B82F6';
-    //     bikeContent.style.display = 'block';
-    //     carContent.style.display = 'none';
-    // });
+        let ham = document.querySelector('.hamburger');
+        let items = document.querySelector('.items');
+        let open = false;
 
-    // carTab.addEventListener('click', () => {
-    //     carTab.style.backgroundColor = '#1976D2';
-    //     bikeTab.style.backgroundColor = '#2196F3';
-    //     carContent.style.display = 'block';
-    //     bikeContent.style.display = 'none';
-    // });
-</script>
+        ham.addEventListener('click', () => {
+            if (open === false) {
+                items.style.top = '10%';
+                ham.classList.add('ri-close-fill');
+                ham.classList.remove('ri-menu-line');
+                open = true;
+                items.style.transition = '0.3s all ease';
+            } else {
+                items.style.top = '-110%';
+                ham.classList.remove('ri-close-fill');
+                ham.classList.add('ri-menu-line');
+                open = false;
+            }
+        });
+    </script>
+</body>
 
 </html>

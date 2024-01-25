@@ -1,4 +1,3 @@
-<!-- crm/templates/crm/map_result.html -->
 {% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
@@ -6,70 +5,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Result</title>
+    <title>Map Result Page</title>
     {% tailwind_css %}
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet" />
-    <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?key=YOUR_BING_MAPS_API_KEY"></script>
-
-    <!-- Set Django template variables as data attributes -->
-    <script>
-        var startLocationData = JSON.parse('{{ start_location_json|escapejs }}');
-        var endDestinationData = JSON.parse('{{ end_destination_json|escapejs }}');
-    </script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
 </head>
 
 <body>
     <nav class="bg-blue-600 text-white font-bold flex items-center justify-between p-4">
-        <div class="logo">Logo</div>
-        <!-- Add your navigation links if needed -->
+        <div class="logo">logo</div>
+        <div class="items md:flex flex flex-col md:flex-row absolute md:static left-[0%] pb-4 top-[-110%] w-full md:w-auto bg-blue-600">
+            <a href="/" class="nav-items text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">Home</a>
+            <a href="" class="nav-items text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">About</a>
+            <a href="" class="nav-items text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">Profile</a>
+            <a href="" class="nav-items text-center my-5 hover:text-gray-400 cursor-pointer transition-colors md:mx-3 text-xl">Contact</a>
+        </div>
+        <i class="ri-menu-line text-3xl hamburger md:hidden cursor-pointer"></i>
     </nav>
 
-    <div class="main h-[100vh]">
-        <div class="bike-content tab-content h-[100%]">
-            <div class="wrapper my-5">
-                <p class="text-center font-bold text-2xl">Map Result</p>
-                <div id="map" style="height: 400px;"></div>
-                <div class="result-info">
-                    <p>Start Location: {{ start_location }}</p>
-                    <p>End Destination: {{ end_destination }}</p>
-                    <p>Distance: {{ distance }} km</p>
-                    <p>Cost: {{ cost }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="map" style="width: 100%; height: 400px;"></div>
+    <!-- Attach serialized data to the HTML element for JavaScript access -->
+    <div id="vehicles-data" data-vehicles="{{ vehicles_json|escapejs }}"></div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script>
-        function initMap() {
-            var startLocation = new Microsoft.Maps.Location(startLocationData.latitude, startLocationData.longitude);
-            var endDestination = new Microsoft.Maps.Location(endDestinationData.latitude, endDestinationData.longitude);
-
-            var map = new Microsoft.Maps.Map(document.getElementById('map'), {
-                credentials: 'AsQxFl6g4F3LyOFAaZjIj1Y_L0oTY879ZgmCfeDuQGT0rv-j3K_OOgCKN5kup1Dw',
-                center: startLocation,
-                zoom: 8
+        function renderMap() {
+            var map = L.map('map').setView([0, 0], 2);
+    
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+    
+            var vehiclesDataElement = document.getElementById('vehicles-data');
+            var vehiclesData = JSON.parse(vehiclesDataElement.getAttribute('data-vehicles'));
+    
+            var routeGroup = L.featureGroup().addTo(map);
+    
+            vehiclesData.forEach(function (vehicle) {
+                var currentLat = vehicle.current_location.latitude;
+                var currentLng = vehicle.current_location.longitude;
+                var destinationLat = vehicle.destination.latitude;
+                var destinationLng = vehicle.destination.longitude;
+    
+                var currentMarker = L.marker([currentLat, currentLng])
+                    .addTo(map)
+                    .bindPopup('Current Location: ' + currentLat + ', ' + currentLng);
+    
+                var destinationMarker = L.marker([destinationLat, destinationLng])
+                    .addTo(map)
+                    .bindPopup('Destination: ' + destinationLat + ', ' + destinationLng);
+    
+                L.Routing.control({
+                    waypoints: [
+                        L.latLng(currentLat, currentLng),
+                        L.latLng(destinationLat, destinationLng)
+                    ],
+                    routeWhileDragging: true
+                }).addTo(routeGroup);
             });
-
-            var startPin = new Microsoft.Maps.Pushpin(startLocation, { title: 'Start Location' });
-            var endPin = new Microsoft.Maps.Pushpin(endDestination, { title: 'End Destination' });
-
-            map.entities.push(startPin);
-            map.entities.push(endPin);
-
-            // Optionally, you can add a route between the start and end locations
-            var directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
-            var waypoint1 = new Microsoft.Maps.Directions.Waypoint({ location: startLocation });
-            var waypoint2 = new Microsoft.Maps.Directions.Waypoint({ location: endDestination });
-            directionsManager.addWaypoint(waypoint1);
-            directionsManager.addWaypoint(waypoint2);
-            directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('itineraryDiv') });
-            directionsManager.calculateDirections();
+    
+            // Check if the route group has valid bounds before attempting to fit the map
+            if (routeGroup.getBounds().isValid()) {
+                map.fitBounds(routeGroup.getBounds());
+            }
         }
-
+    
         window.onload = function () {
-            initMap();
+            renderMap();
         };
     </script>
+    
 </body>
 
 </html>

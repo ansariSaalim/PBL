@@ -1,49 +1,43 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from .models import *
+from django.core.serializers import serialize
 import requests
 
-def calculate_distance_cost(request):
-    if request.method == 'POST':
-        start_location = request.POST.get('start_location')
-        end_destination = request.POST.get('end_destination')
-        mileage = float(request.POST.get('mileage'))
+from .models import vehicle
+def map(request):
+    queryset = vehicle.objects.all()
 
-        # Validate input data
-        if not start_location or not end_destination or not mileage:
-            return JsonResponse({'error': 'Please provide valid input data'})
+    vehicles_data = []
+    for v in queryset:  # Change the loop variable name to 'v'
+        try:
+            current_location_parts = v.current_location.split(',')
+            destination_parts = v.destination.split(',')
 
-        # Use Bing Maps Distance Matrix API to calculate distance
-        bing_maps_api_key = 'AsQxFl6g4F3LyOFAaZjIj1Y_L0oTY879ZgmCfeDuQGT0rv-j3K_OOgCKN5kup1Dw'  # Replace with your actual Bing Maps API key
-        endpoint = 'https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix'
-        params = {
-            'origins': f'{start_location}',  # Assuming locations are in the USA
-            'destinations': f'{end_destination}, ',
-            'travelMode': 'driving',
-            'key': bing_maps_api_key,
-        }
+            if len(current_location_parts) != 2 or len(destination_parts) != 2:
+                # Skip this record if the format is not as expected
+                continue
 
-        response = requests.get(endpoint, params=params)
-        data = response.json()
+            current_location = {
+                'latitude': float(current_location_parts[0]),
+                'longitude': float(current_location_parts[1]),
+            }
+            destination = {
+                'latitude': float(destination_parts[0]),
+                'longitude': float(destination_parts[1]),
+            }
+            vehicles_data.append({'current_location': current_location, 'destination': destination})
+        except (ValueError, IndexError):
+            # Handle the case where conversion to float or splitting fails
+            # Log the error or take other appropriate actions
+            pass
 
-        if response.status_code == 200 and 'resourceSets' in data and data['resourceSets']:
-            # Extract distance in kilometers from the API response
-            distance_in_kilometers = data['resourceSets'][0]['resources'][0]['results'][0]['travelDistance']
+    context = {'vehicles_json': vehicles_data}
+    return render(request, 'crm/map_result.html', context)
 
-            # Calculate cost based on mileage
-            cost = mileage * distance_in_kilometers
 
-            # Pass the calculated values to the template
-            return render(request, 'crm/map_result.html', {
-                'start_location': start_location,
-                'end_destination': end_destination,
-                'distance': distance_in_kilometers,
-                'cost': cost
-            })
 
-        return JsonResponse({'error': 'Error calculating distance. Please try again.'})
 
-    # If the request method is not POST, return an error response
-    return JsonResponse({'error': 'Invalid request method'})
 
 # Create your views here.
 def home(request):
@@ -51,6 +45,19 @@ def home(request):
 def about(request):
     return render(request,'crm/about.html')
 def personal_vehicle(request):
+    if request.method == 'POST':
+        current_location = request.POST.get('current')
+        destination = request.POST.get('destination')
+        mileage = request.POST.get('mileage')
+        
+        en = vehicle(
+            current_location = current_location,
+            destination = destination,
+            mileage = mileage
+        )
+        en.save()
+        # return redirect('/maps/')
+        
     return render(request,'crm/personal.html')
 def car(request):
     return render(request,'crm/personal.html')
